@@ -3,7 +3,7 @@ enum Icon {
     User = 'user-location.png',
 }
 
-const iconPath = '/assets/';
+const iconPath = 'assets/';
 
 interface IconPaths {
     [key: string]: string;
