@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import * as Leaflet from 'leaflet';
+import iconPaths from './models/icons-enum';
 
 @Component({
   selector: 'app-root',
@@ -21,27 +22,60 @@ export class AppComponent {
     center: { lat: 47.06365572118242, lng: 21.900861825903533 } , 
   }
 
+  ngOnInit(){
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(this.setGeoLocation.bind(this));
+   }
+  }
+
+  setGeoLocation(position: { coords: { latitude: any; longitude: any } }) {
+    const {
+       coords: { latitude, longitude },
+    } = position;
+ 
+    // const  map = Leaflet.map('map').setView([latitude, longitude], 3);
+ 
+    // Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>contributors'
+    //  } ).addTo(map);
+
+    const initialMarkers = [
+      {
+        position: { lat: latitude, lng: longitude },
+        draggable: false
+      },
+    ];
+
+    for (let index = 0; index < initialMarkers.length; index++) {
+      const data = initialMarkers[index];
+      const marker = this.generateMarker(data, index, "user");
+      marker.addTo(this.map).bindPopup(`<b>You</b>`);
+      this.map.panTo(data.position);
+      this.markers.push(marker)
+    }
+ }
+
   initMarkers() {
     const initialMarkers = [
       {
-        position: { lat: 47.06367783199533, lng: 21.903514266180373 },
+        position: { lat: 47.066487431354, lng: 21.911233664018358 },
         draggable: true
       },
     ];
     for (let index = 0; index < initialMarkers.length; index++) {
       const data = initialMarkers[index];
-      const marker = this.generateMarker(data, index);
-      marker.addTo(this.map).bindPopup(`<b>Beerpong night</b>`);
+      const marker = this.generateMarker(data, index, "party");
+      marker.addTo(this.map).bindPopup(`<b>Beerpong Night</b><br><a href="https://www.example.com">Bilete</a>`);
       //this.map.panTo(data.position);
       this.markers.push(marker)
     }
   }
 
-  generateMarker(data: any, index: number) {
+  generateMarker(data: any, index: number, type: string) {
     var greenIcon = Leaflet.icon({
-      iconUrl: './assets/party.png',
+      iconUrl: iconPaths[type],
   
-      iconSize:     [32, 32], // size of the icon
+      iconSize: [32, 32], // size of the icon
   });
 
     return Leaflet.marker(data.position, { draggable: data.draggable, icon: greenIcon})
