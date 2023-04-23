@@ -18,7 +18,7 @@ export class AppComponent {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       })
     ],
-    zoom: 16,
+    zoom: 15,
     center: { lat: 47.06365572118242, lng: 21.900861825903533 } , 
   }
 
@@ -65,7 +65,7 @@ export class AppComponent {
     for (let index = 0; index < initialMarkers.length; index++) {
       const data = initialMarkers[index];
       const marker = this.generateMarker(data, index, "party");
-      marker.addTo(this.map).bindPopup(`<b>Beerpong Night</b><br><a href="https://www.example.com">Bilete</a>`);
+      marker.addTo(this.map).bindPopup(`<b>Beerpong Night</b><br>Azi (9pm - 2am)<br><a href="https://www.example.com">Bilete</a>`);
       //this.map.panTo(data.position);
       this.markers.push(marker)
     }
@@ -74,8 +74,7 @@ export class AppComponent {
   generateMarker(data: any, index: number, type: string) {
     var greenIcon = Leaflet.icon({
       iconUrl: iconPaths[type],
-  
-      iconSize: [32, 32], // size of the icon
+      iconSize: [32, 32],
   });
 
     return Leaflet.marker(data.position, { draggable: data.draggable, icon: greenIcon})
