@@ -9,7 +9,8 @@ import iconPaths from './models/icons-enum';
 })
 export class AppComponent {
   title = 'maps-frontend';
-  
+  isLoading: boolean = false;
+
   map!: Leaflet.Map;
   markers: Leaflet.Marker[] = [];
   options = {
@@ -19,7 +20,7 @@ export class AppComponent {
       })
     ],
     zoom: 15,
-    center: { lat: 47.06365572118242, lng: 21.900861825903533 } , 
+    //center: { lat: 47.06365572118242, lng: 21.900861825903533 } , 
   }
 
   ngOnInit(){
@@ -32,12 +33,6 @@ export class AppComponent {
     const {
        coords: { latitude, longitude },
     } = position;
- 
-    // const  map = Leaflet.map('map').setView([latitude, longitude], 3);
- 
-    // Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>contributors'
-    //  } ).addTo(map);
 
     const initialMarkers = [
       {
@@ -49,7 +44,7 @@ export class AppComponent {
     for (let index = 0; index < initialMarkers.length; index++) {
       const data = initialMarkers[index];
       const marker = this.generateMarker(data, index, "user");
-      marker.addTo(this.map).bindPopup(`<b>You</b>`);
+      marker.addTo(this.map).bindPopup(`You`);
       this.map.panTo(data.position);
       this.markers.push(marker)
     }
