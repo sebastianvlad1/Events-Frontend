@@ -7,7 +7,7 @@
 </div>
 </div>
 
-<div *ngIf="this.isLoading" class="loading-screen">
+<div *ngIf="this.isLoading" class="loading-screen" [@myInsertRemoveTrigger]>
   <div class="loading-spinner"></div>
   <div class="loading-text">Searching events...</div>
 </div>

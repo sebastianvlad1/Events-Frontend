@@ -2,11 +2,23 @@ import { Component } from '@angular/core';
 import * as Leaflet from 'leaflet';
 import iconPaths from './models/icons-enum';
 import { Marker } from './models/Marker';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  animations: [
+    trigger('myInsertRemoveTrigger', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('0.5s', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [
+        animate('0.5s', style({ opacity: 0 })),
+      ]),
+    ]),
+  ]
 })
 export class AppComponent {
   isLoading: boolean = false;
@@ -22,13 +34,17 @@ export class AppComponent {
     //center: { lat: 47.06365572118242, lng: 21.900861825903533 } , 
   }
 
-  ngOnInit(){
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this.setGeoLocation.bind(this));
-   }
+  ngOnInit() {
+
   }
 
-  setGeoLocation(position: { coords: { latitude: any; longitude: any } }) {
+  private findUserPosition() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(this.setUserPositionMark.bind(this));
+    }
+  }
+
+  setUserPositionMark(position: { coords: { latitude: any; longitude: any } }) {
     const {
       coords: { latitude, longitude },
     } = position;
@@ -45,9 +61,15 @@ export class AppComponent {
     userMarker.addTo(this.map).bindPopup(data.description);
     this.map.panTo(data.position);
     this.markers.push(userMarker);
+    console.log("Set geo location done.");
+    this.showEventsOnMap();
   }
 
   showEventsOnMap() {
+    this.isLoading = true;
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2000);
     let eventsMarkers: Marker[] = this.findNearbyEvents();
     for (let index = 0; index < eventsMarkers.length; index++) {
       const data: Marker = eventsMarkers[index];
@@ -56,6 +78,7 @@ export class AppComponent {
       //this.map.panTo(data.position);
       this.markers.push(marker)
     }
+    console.log("Show eventslocation done.");
   }
 
   private findNearbyEvents(): Marker[]{
@@ -64,6 +87,11 @@ export class AppComponent {
         position: { lat: 47.066487431354, lng: 21.911233664018358 },
         draggable: true,
         description: `<b>Beerpong Night</b><br>Azi (9pm - 2am)<br><a href="https://www.example.com">Bilete</a>`
+      },
+      {
+        position: { lat: 47.061605891457404, lng: 21.905843922142584 },
+        draggable: true,
+        description: `<b>Girl's Night</b><br>Azi (9pm - 2am)<br><a href="https://www.example.com">Bilete</a>`
       },
     ];
     return eventsMarkers;
@@ -82,7 +110,7 @@ export class AppComponent {
 
   onMapReady($event: Leaflet.Map) {
     this.map = $event;
-    this.showEventsOnMap();
+    this.findUserPosition();
   }
 
   mapClicked($event: any) {
